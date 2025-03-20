@@ -1,29 +1,36 @@
-import openai
-
+import requests
+import os
 class OpenaiRepo:
     def __init__(self, api_key=None):
-        self.api_key = api_key
-        openai.api_key = self.api_key  # Set API key for authentication
+        self.api_key = os.getenv("OPENAI_KEY")
 
     def send_completion_request(self, text_input, model="gpt-3.5-turbo", max_tokens=100):
-        """
-        Sends a completion request to OpenAI's API.
+# Load the API key from an environment variable (recommended for security)
 
-        :param text_input: The user prompt for the model.
-        :param model: The model to use (default: "gpt-3.5-turbo").
-        :param max_tokens: The maximum number of tokens to generate.
-        :return: The generated text response.
-        """
-        try:
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=[{"role": "user", "content": text_input}],
-                max_tokens=max_tokens
-            )
-            return response["choices"][0]["message"]["content"]
-        except openai.error.OpenAIError as e:
-            print(f"Error communicating with OpenAI: {e}")
-            return None
+        # Define the API URL
+        url = "https://api.openai.com/v1/chat/completions"
+
+        # Define headers
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+
+        # Define the request payload
+        data = {
+            "model": "gpt-4o",
+            "messages": [
+                {"role": "developer", "content": "You are a helpful assistant."},
+                {"role": "user", "content": "Hello!"}
+            ]
+        }
+
+        # Make the API request
+        response = requests.post(url, headers=headers, json=data)
+
+# Print the response
+        return response.content
+
 
 # Example usage:
 if __name__ == "__main__":
