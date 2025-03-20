@@ -21,7 +21,7 @@ class OpenaiRepo:
                 max_tokens=max_tokens
             )
             return response["choices"][0]["message"]["content"]
-        except openai.error.OpenAIError as e:
+        except Exception as e:
             print(f"Error communicating with OpenAI: {e}")
             return None
 
